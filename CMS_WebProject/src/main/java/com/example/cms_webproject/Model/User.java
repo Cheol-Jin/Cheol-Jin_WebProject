@@ -1,9 +1,6 @@
 package com.example.cms_webproject.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -12,12 +9,12 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
+    @Column(name = "order_id")
     private Long order;
 
-    private String user_id;
+    private String name;
 
-    private String user_password;
+    private String password;
 
-    private String user_email;
+    private String email;
 }

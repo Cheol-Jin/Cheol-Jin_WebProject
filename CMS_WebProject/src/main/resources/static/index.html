@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 페이지</title>
+</head>
+<body>
+<h1>로그인</h1>
+<!-- 로그인 양식 -->
+<form id="loginForm">
+    Email: <input type="text" id="email" name="email"><br>
+    비밀번호: <input type="password" id="password" name="password"><br>
+    <input type="submit" value="로그인">
+</form>
+
+<!-- 회원가입 페이지로 이동하는 버튼 -->
+<a href="signup.html">회원가입</a>
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        // POST 요청으로 보낼 데이터
+        const userData = {
+            email: email,
+            password: password
+        };
+
+        // POST 요청 설정
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        };
+
+        // Fetch API를 사용하여 서버로 POST 요청 보내기
+        fetch('/api/login', requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    // 로그인 성공 시 원하는 동작 수행
+                    alert("로그인 성공!");
+                    console.log(response);
+                } else {
+                    // 로그인 실패 시 원하는 동작 수행
+                    console.error("로그인 실패.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("로그인 실패!");
+            });
+    });
+</script>
+</body>
+</html>

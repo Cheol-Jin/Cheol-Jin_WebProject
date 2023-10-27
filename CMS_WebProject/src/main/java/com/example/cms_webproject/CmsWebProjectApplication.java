@@ -8,6 +8,8 @@ public class CmsWebProjectApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CmsWebProjectApplication.class, args);
+        //SpringApplication app = new SpringApplication(CmsWebProjectApplication.class);
+        //app.run(args);
     }
 
 }
