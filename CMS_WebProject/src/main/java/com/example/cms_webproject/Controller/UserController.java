@@ -21,36 +21,30 @@ public class UserController {
 
     @PostMapping("/user")
     @ResponseBody
-    public Map<String, Object> create(@RequestParam String name ,@RequestParam String email,@RequestParam String pw) {
+    public Map<String, Object> create(@RequestBody User user) {
         // 회원 가입 ver1
-        System.out.println(name);
-        System.out.println(email);
-        System.out.println(pw);
+        System.out.println(user.getId());
+        System.out.println(user.getEmail());
+        System.out.println(user.getPassword());
 
         Map resultTable = new HashMap<>();
 
-        User createdUser = new User();
-        createdUser.setName(name);
-        createdUser.setEmail(email);
-        createdUser.setPassword(pw);
-
-        User findedUser = userRepository.findByEmail(createdUser.getEmail());
-
-        if (!Pattern.matches( "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",createdUser.getEmail())){
+        if (!Pattern.matches( "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",user.getEmail())){
             resultTable.put("message","이메일 형식이 잘못된 형식입니다.");
             resultTable.put("status",401);
             return resultTable;
         }
 
+        User findedUser = userRepository.findById(user.getId());
 
         if (findedUser != null){
             // 이메일 중복
-            resultTable.put("message","중복된 이메일입니다.");
+            resultTable.put("message","중복된 아이디입니다.");
             resultTable.put("status",401);
             return resultTable;
         }
 
-        userRepository.save(createdUser);
+        userRepository.save(user);
 
         resultTable.put("message","회원가입 성공.");
         resultTable.put("status",201);
@@ -59,22 +53,31 @@ public class UserController {
     }
 
     @GetMapping("/user/{order}")
-    public String read(@PathVariable Long order) {
-
+    public Map<String,Object> read(@PathVariable Long order) {
+        Map resultTable = new HashMap<>();
         Optional<User> userOptional = userRepository.findById(order);
-        userOptional.ifPresent(System.out::println);
-
-        return "successfully executed";
+        if (userOptional.isPresent()) {
+            resultTable.put("userinfo",userOptional.get());
+            resultTable.put("message","정보조회성공");
+            resultTable.put("status","201");
+        } else {
+            resultTable.put("message","정보를 조회할 수 없습니다.");
+            resultTable.put("status","401");//없어도 되지 않나...
+        }
+        return resultTable;
     }
+
+
+
 
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody User user) {
         Map resultTable = new HashMap<>();
-        User findedUser = userRepository.findByEmail(user.getEmail());
+        User findedUser = userRepository.findById(user.getId());
         System.out.println(findedUser);
 
         if(findedUser == null) {
-            resultTable.put("message","존재하지 않는 이메일입니다.");
+            resultTable.put("message","존재하지 않는 아이디입니다.");
             resultTable.put("status",401);
             return resultTable;
         }

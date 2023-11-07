@@ -12,9 +12,14 @@ public class User {
     @Column(name = "order_id")
     private Long order;
 
-    private String name;
+    private String id;
 
     private String password;
 
     private String email;
+    //약관
+    private boolean is14over;
+    private boolean service;
+    private boolean privacyinfo;
+    private boolean marketing;
 }
