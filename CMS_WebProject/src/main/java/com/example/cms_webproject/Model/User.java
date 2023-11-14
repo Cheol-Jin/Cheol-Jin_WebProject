@@ -9,8 +9,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private Long order;
+    private Long orders;
 
     private String id;
 

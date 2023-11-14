@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Test</title>
+</head>
+<body>
+<h2>Material Information Retrieval</h2>
+<form id="materialForm">
+    <label for="orders">Enter Orders:</label>
+    <input type="text" id="orders" name="orders" required>
+    <button type="button" onclick="getMaterial()">Get Material</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    function getMaterial() {
+        var ordersValue = document.getElementById("orders").value;
+
+        // Fetch API를 사용하여 서버에 GET 요청 보내기
+        fetch("/api/materialtreat/" + ordersValue)
+            .then(response => response.json())
+            .then(result => displayResult(result))
+            .catch(error => console.error('Error:', error));
+    }
+
+    function displayResult(result) {
+        var resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = "<p>Status: " + result.status + "</p>" +
+                             "<p>" + result.message + "</p>";
+
+        if (result.status === 201) {
+            var materialInfo = result["기자재 정보"];
+            resultDiv.innerHTML += "<p>Material Name: " + materialInfo.name + "</p>" +
+                                   "<p>Brand: " + materialInfo.brand + "</p>" +
+                                   "<p>Uses: " + materialInfo.uses + "</p>" +
+                                   "<p>Matter: " + materialInfo.matter + "</p>" +
+                                   "<p>Price: " + materialInfo.price + "</p>" +
+                                   "<p>Image:</p>" +
+                                   "<img src='" + materialInfo.image + "' alt='Material Image'>";
+        }
+    }
+</script>
+</body>
+</html>
+
+</html>

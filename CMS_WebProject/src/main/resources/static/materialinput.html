@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>자재 정보 입력</title>
+</head>
+<body>
+<form id="materialForm">
+    <label for="materialName">자재 이름:</label>
+    <input type="text" id="materialName" name="materialName" required><br>
+
+    <label for="brand">브랜드:</label>
+    <input type="text" id="brand" name="brand" required><br>
+
+    <label for="materialType">재료 종류:</label>
+    <input type="text" id="materialType" name="materialType" required><br>
+
+    <label for="usage">용도:</label>
+    <input type="text" id="usage" name="usage" required><br>
+
+    <label for="price">가격:</label>
+    <input type="number" id="price" name="price" required><br>
+
+
+    <label for="image">사진 URL:</label>
+    <input type="text" id="image" name="image" required><br>
+
+
+
+    <button type="button" id="submitBtn">입력 완료</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    const materialForm = document.getElementById("materialForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const resultDiv = document.getElementById("result");
+
+    submitBtn.addEventListener("click", () => {
+        const formData = new FormData(materialForm);
+        const materialData = {
+            name: formData.get("materialName"),
+            brand: formData.get("brand"),
+            matter: formData.get("materialType"),
+            uses: formData.get("usage"),
+            price: formData.get("price"),
+            image: formData.get("image")
+
+        };
+
+        // 서버로 데이터 전송 (실제 서버와 연결해야 함)
+        fetch("/api/materialtreat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(materialData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // 서버 응답을 출력
+            //resultDiv.innerHTML = `서버 응답: ${JSON.stringify(data)}`;
+        })
+        .catch(error => {
+            //console.error("데이터 전송 오류: " + error);
+        });
+    });
+</script>
+</body>
+</html>

@@ -58,7 +58,14 @@ public class UserController {
         Map resultTable = new HashMap<>();
         Optional<User> userOptional = userRepository.findById(order);
         if (userOptional.isPresent()) {
-            resultTable.put("userinfo",userOptional.get());
+            User temp = new User();
+
+            temp.setId(userOptional.get().getId());
+            temp.setEmail(userOptional.get().getEmail());
+            temp.setOrders(userOptional.get().getOrders());
+            temp.setMarketing(userOptional.get().isMarketing());
+
+            resultTable.put("userinfo",temp);
             resultTable.put("message","정보조회성공");
             resultTable.put("status","201");
         } else {
@@ -67,9 +74,27 @@ public class UserController {
         }
         return resultTable;
     }
+//회원정보 수정
+    @PutMapping("/user")
+    public Map<String,Object> edit(@PathVariable Long orders, @RequestBody User user){
+        Optional<User> userOptional = userRepository.findByOrders(orders);
+        Map<String,Object> resultTable= new HashMap<>();
+        if(userOptional.isPresent()){
+            User user1 = userOptional.get();
+            user1.setPassword(user.getPassword());
+            user1.setEmail(user.getEmail());
+            user1.setMarketing(user.isMarketing());
 
-
-
+            userRepository.save(user1);
+            resultTable.put("message","정보수정 성공");
+            resultTable.put("status",201);
+        }
+        else{
+            resultTable.put("message","해당 user가 없습니다.");
+            resultTable.put("status",401);
+        }
+        return resultTable;
+    }
 
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody User user) {
@@ -91,9 +116,26 @@ public class UserController {
         // accestoken -> 유저정보 요청 가능
         resultTable.put("message","로그인 성공.");
         resultTable.put("status",200);
-        resultTable.put("User_id",findedUser.getOrder());
+        resultTable.put("User_orders",findedUser.getOrders());
 
         return resultTable;
     }
+    @ResponseBody
+    @DeleteMapping("/user")
+    public Map<String,Object> delete(@RequestBody User user){
+        Map<String, Object> resultTable = new HashMap<>();
+
+        if (userRepository.findByOrders(user.getOrders())!=null){
+            userRepository.deleteByOrders(user.getOrders());
+            resultTable.put("message","삭제완료");
+            resultTable.put("status","201");
+        }
+        else{
+            resultTable.put("message","해당 order인 유저가 없음");
+            resultTable.put("status","401");
+        }
+        return resultTable;
+    }//확인X
+
 
 }

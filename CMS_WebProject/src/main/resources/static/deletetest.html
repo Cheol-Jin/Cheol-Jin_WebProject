@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>사용자 삭제</title>
+</head>
+<body>
+<h2>주문번호로 사용자 삭제</h2>
+<label for="orders">주문번호 입력:</label>
+<input type="number" id="orders" required>
+<br><br>
+<button id="deleteButton">사용자 삭제</button>
+<p id="resultMessage"></p>
+</body>
+<script>
+    document.getElementById("deleteButton").addEventListener("click", deleteUser);
+
+    function deleteUser() {
+        const orders = document.getElementById("orders").value;
+
+        fetch("api/user", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({orders:orders})
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultMessage = document.getElementById("resultMessage");
+            if (data.status === "201") {
+                resultMessage.textContent = "삭제 완료: " + data.message;
+            } else if (data.status === "401") {
+                resultMessage.textContent = "해당 주문번호의 사용자가 없습니다: " + data.message;
+            }
+        })
+        .catch(error => {
+            console.error("요청 중 오류 발생: " + error);
+        });
+    }
+</script>
+</html>

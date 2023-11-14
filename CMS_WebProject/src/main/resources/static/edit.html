@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>회원 정보 및 약관 동의 수정</title>
+</head>
+<body>
+<h1>회원 정보 및 약관 동의 수정</h1>
+<form id="memberInfoForm">
+    <label for="password">비밀번호:</label>
+    <input type="password" id="password" name="password"><br><br>
+
+    <label for="email">이메일:</label>
+    <input type="text" id="email" name="email"><br><br>
+
+    <label for="termsAgreement">약관 동의:</label>
+    <input type="checkbox" id="termsAgreement" name="termsAgreement"><br><br>
+
+    <button type="button" id="updateButton">정보 및 약관 수정</button>
+</form>
+
+<div id="message"></div>
+
+<script>
+    // 폼 요소와 버튼을 가져옵니다.
+    const memberInfoForm = document.getElementById("memberInfoForm");
+    const updateButton = document.getElementById("updateButton");
+    const messageDiv = document.getElementById("message");
+
+    // 버튼 클릭 시 서버로 데이터 전송
+    updateButton.addEventListener("click", () => {
+        const password = document.getElementById("password").value;
+        const email = document.getElementById("email").value;
+        const termsAgreement = document.getElementById("termsAgreement").checked;
+
+        const data = {
+            password: password,
+            email: email,
+            marketing: termsAgreement
+        };
+
+        fetch("api/user/1/edit", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {return response.json();})
+        .then(result => {
+            if(result.status == 201){
+            alert("변경되었습니다.");
+            }
+        })
+        .catch(error => {
+            alert("오류 발생하였습니다");
+        });
+    });
+</script>
+</body>
+</html>

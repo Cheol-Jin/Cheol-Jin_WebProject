@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add to Basket</title>
+</head>
+<body>
+<h1>Add to Basket</h1>
+
+<form id="basketForm">
+    <label for="userOrders">User Orders:</label>
+    <input type="text" id="userOrders" name="userOrders" placeholder="Enter user orders">
+
+    <label for="materialOrders">Material Orders:</label>
+    <input type="text" id="materialOrders" name="materialOrders" placeholder="Enter material orders">
+
+    <label for="number">Number:</label>
+    <input type="text" id="number" name="number" placeholder="Enter quantity">
+
+    <button type="button" onclick="addToBasket()">Add to Basket</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    function addToBasket() {
+        var userOrders = document.getElementById("userOrders").value;
+        var materialOrders = document.getElementById("materialOrders").value;
+        var number = document.getElementById("number").value;
+
+        fetch('/api/basket', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'user_orders': userOrders,
+                'material_orders': materialOrders,
+                'number': number
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                displayResult(data);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function displayResult(data) {
+        var resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = ""; // Clear previous results
+
+        var message = document.createElement("p");
+        message.textContent = data.message;
+        resultDiv.appendChild(message);
+
+        if (data.status === 201) {
+            // Additional logic for success, if needed
+        }
+    }
+</script>
+</body>
+</html>

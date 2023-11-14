@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Search</title>
+</head>
+<body>
+<h1>Material Search</h1>
+
+<label for="materialName">Material Name:</label>
+<input type="text" id="materialName" name="materialName" placeholder="Enter material name">
+
+<button onclick="searchMaterial()">Search</button>
+
+<div id="result"></div>
+
+<script>
+    function searchMaterial() {
+        var name = document.getElementById("materialName").value;
+
+        fetch('/api/materialsearch?name=' + name)
+            .then(response => response.json())
+            .then(data => {
+                displayResult(data);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function displayResult(data) {
+        var resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = ""; // Clear previous results
+
+        var message = document.createElement("p");
+        message.textContent = data.message;
+        resultDiv.appendChild(message);
+
+        if (data.status === 201) {
+            var materialData = document.createElement("pre");
+            materialData.textContent = JSON.stringify(data.data, null, 2);
+            resultDiv.appendChild(materialData);
+        }
+    }
+</script>
+</body>
+</html>
