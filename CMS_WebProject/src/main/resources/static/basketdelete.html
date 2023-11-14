@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Basket</title>
+</head>
+<body>
+
+<label for="userOrders">User Orders:</label>
+<input type="text" id="userOrders" placeholder="Enter User Orders">
+
+<br>
+
+<label for="materialOrders">Material Orders:</label>
+<input type="text" id="materialOrders" placeholder="Enter Material Orders">
+
+<br>
+
+<button onclick="deleteBasket()">Delete Basket</button>
+
+<script>
+    async function deleteBasket() {
+        const userOrdersInput = document.getElementById('userOrders');
+        const materialOrdersInput = document.getElementById('materialOrders');
+
+        const userOrders = userOrdersInput.value;
+        const materialOrders = materialOrdersInput.value;
+
+        try {
+            const response = await fetch(`/basket?user_orders=${userOrders}&material_orders=${materialOrders}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const result = await response.json();
+
+            // 서버의 응답에 따라 처리
+            if (response.ok) {
+                console.log(result.message);
+                console.log('Status:', result.status);
+            } else {
+                console.error(result.message);
+                console.error('Status:', result.status);
+            }
+
+        } catch (error) {
+            console.error('Error during fetch:', error);
+        }
+    }
+</script>
+
+</body>
+</html>

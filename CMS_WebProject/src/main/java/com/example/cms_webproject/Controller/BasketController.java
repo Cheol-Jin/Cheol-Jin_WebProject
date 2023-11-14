@@ -83,7 +83,7 @@ public class BasketController {
            resultTable.put("status",201);
         }
         else{
-            resultTable.put("message","해당 user_orders와 material_orders에 해당하는 장바구니가 비어있습니다.");
+            resultTable.put("message","해당 user_orders와 material_orders에 해당하는 장바구니가 없습니다.");
             resultTable.put("status",401);
         }
         return resultTable;
@@ -104,7 +104,7 @@ public class BasketController {
             Basket basket = basketRepository.findByUserAndMaterial(user, material);
             basket.setNumber(number);
             basketRepository.save(basket);
-            resultTable.put("message","해당 user와 material의 장바구니 목록 삭제");
+            resultTable.put("message","해당 user와 material의 장바구니 개수변경");
             resultTable.put("status",201);
         }
         return resultTable;

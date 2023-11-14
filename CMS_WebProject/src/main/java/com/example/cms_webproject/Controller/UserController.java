@@ -34,16 +34,15 @@ public class UserController {
             resultTable.put("message","이메일 형식이 잘못된 형식입니다.");
             resultTable.put("status",401);
             return resultTable;
-        }
+        }//이메일 형식
 
         User findedUser = userRepository.findById(user.getId());
 
         if (findedUser != null){
-            // 이메일 중복
             resultTable.put("message","중복된 아이디입니다.");
             resultTable.put("status",401);
             return resultTable;
-        }
+        }//아이디 중복
 
         userRepository.save(user);
 
