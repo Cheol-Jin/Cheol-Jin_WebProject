@@ -28,7 +28,7 @@
         const materialOrders = materialOrdersInput.value;
 
         try {
-            const response = await fetch(`/basket?user_orders=${userOrders}&material_orders=${materialOrders}`, {
+            const response = await fetch(`api/basket?user_orders=${userOrders}&material_orders=${materialOrders}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

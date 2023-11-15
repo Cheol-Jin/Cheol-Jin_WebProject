@@ -25,11 +25,14 @@ public class BasketController {
     @Autowired
     private MaterialRepository materialRepository;
     @GetMapping("/basket/{orders}")
-    public Map<String,Object> getbasket(@PathVariable Long user_orders){
+    public Map<String,Object> getbasket(@PathVariable Long orders){
+        System.out.println(1);
         Map<String,Object> resultTable = new HashMap<>();
         User user = new User();
-        user.setOrders(user_orders);
+        user.setOrders(orders);
+        System.out.println(2);
         if(!basketRepository.findByUser(user).isEmpty()){
+            System.out.println(3);
             List<Basket> data = basketRepository.findByUser(user);
             resultTable.put("data", data);
             resultTable.put("message","해당 orders인 유저의 장바구니를 가져왔습니다.");
@@ -41,7 +44,7 @@ public class BasketController {
         }
         return resultTable;
     }
-    //가져올때 보통 user정보랑 뭐시기랑 맞게 가져오지 않나...
+    //확인완료
     @PostMapping("/basket")
     public Map<String,Object> putbasket(@RequestParam Long user_orders,@RequestParam Long material_orders,@RequestParam int number){
 
@@ -69,7 +72,7 @@ public class BasketController {
 
         return resultTable;
 
-    }
+    }//확인완료
     @DeleteMapping("/basket")
     public Map<String,Object> dropbasket(@RequestParam Long user_orders, @RequestParam Long material_orders){
         Map<String,Object> resultTable = new HashMap<>();
@@ -87,7 +90,7 @@ public class BasketController {
             resultTable.put("status",401);
         }
         return resultTable;
-    }
+    }//확인 완료
 
     @PutMapping("/basket")
     public Map<String,Object> numberbasket(@RequestParam Long user_orders,@RequestParam Long material_orders,@RequestParam int number){
@@ -109,4 +112,4 @@ public class BasketController {
         }
         return resultTable;
     }
-}
+}//확인완료

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장바구니 개수 변경</title>
+    <!-- jQuery를 사용하기 위해 CDN 추가 -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+
+<h1>장바구니 개수 변경</h1>
+
+<label for="userOrdersInput">사용자 주문 번호:</label>
+<input type="text" id="userOrdersInput" placeholder="사용자 주문 번호를 입력하세요">
+
+<label for="materialOrdersInput">재료 주문 번호:</label>
+<input type="text" id="materialOrdersInput" placeholder="재료 주문 번호를 입력하세요">
+
+<label for="numberInput">변경할 수량:</label>
+<input type="text" id="numberInput" placeholder="변경할 수량을 입력하세요">
+
+<button onclick="updateBasket()">변경</button>
+
+<div id="result"></div>
+
+<script>
+    function updateBasket() {
+        var userOrders = $("#userOrdersInput").val();
+        var materialOrders = $("#materialOrdersInput").val();
+        var number = $("#numberInput").val();
+
+        if (!userOrders || !materialOrders || !number) {
+            alert("모든 필드를 입력하세요.");
+            return;
+        }
+
+        $.ajax({
+            type: "PUT",
+            url: "/api/basket",
+            data: {
+                user_orders: userOrders,
+                material_orders: materialOrders,
+                number: number
+            },
+            success: function (response) {
+                // 서버로부터의 응답을 처리하는 부분
+                displayResult(response);
+            },
+            error: function (error) {
+                console.error("Error during AJAX request", error);
+            }
+        });
+    }
+
+    function displayResult(response) {
+        var resultDiv = $("#result");
+        resultDiv.empty(); // 이전 결과를 지우고 새로운 결과를 표시
+
+        resultDiv.append("<p>Status: " + response.status + "</p>");
+        resultDiv.append("<p>Message: " + response.message + "</p>");
+    }
+</script>
+
+</body>
+</html>
