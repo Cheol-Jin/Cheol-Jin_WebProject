@@ -9,10 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -35,7 +32,7 @@ public class MaterialController {
     }
 
    @GetMapping("/materialtreat")
-   public Map<String,Object> getlist(@RequestParam(value = "brand",required = false) List<String> brand,@RequestParam(value = "matter",required = false) List<String> matter, @RequestParam(value = "users",required = false) List<String>uses,@RequestParam(value = "page",required = true) int page){
+   public Map<String,Object> getlist(@RequestParam(value = "brand",required = false) List<String> brand,@RequestParam(value = "matter",required = false) List<String> matter, @RequestParam(value = "users",required = false) List<String>uses,@RequestParam(value = "page",required = true) int page,@RequestParam(value = "sort",required = false) String sort){
         Map<String,Object> resultTable = new HashMap<>();//안들어오면 전체를 가르키게 해야하넹....
         page=page-1;
         if(brand ==null){
@@ -47,11 +44,37 @@ public class MaterialController {
         if(uses == null){
             uses = materialRepository.findAllUses();
         }
+        //분류 한다.
+
        Pageable pageable = PageRequest.of(page,10);
         List<Material> data = materialRepository.findFilteredMaterials(brand,matter,uses,pageable);
-
+       if(sort != null){
+           if(sort.equals("name")){
+           System.out.println("여");
+           Comparator<Material> nameComparator = Comparator.comparing(Material -> Material.getName());
+           Collections.sort(data,nameComparator);
+       } else if (sort.equals("pricehigh")) {
+           System.out.println("기");
+           Comparator<Material> pricehighComparator = new Comparator<Material>() {
+               @Override
+               public int compare(Material o1, Material o2) {
+                   return o2.getPrice() - o1.getPrice();
+               }
+           };
+           Collections.sort(data,pricehighComparator);
+       } else if (sort.equals("pricelow")) {
+           System.out.println("예");
+           Comparator<Material> pricelowComparator = new Comparator<Material>() {
+               @Override
+               public int compare(Material o1, Material o2) {
+                   return o1.getPrice() - o2.getPrice();
+               }
+           };
+           Collections.sort(data,pricelowComparator);
+       }
+       }
        resultTable.put("data",data);
-
+       System.out.println(2);
        return resultTable;
    }
     @DeleteMapping("/materialtreat")//기자재 order받아서 삭제

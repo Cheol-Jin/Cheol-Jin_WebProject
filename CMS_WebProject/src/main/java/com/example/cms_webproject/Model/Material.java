@@ -14,7 +14,7 @@ public class Material {
     private String brand;
     private String uses;
     private String matter;
-    private Long price;
+    private int price;
     private String image;
 
 }
