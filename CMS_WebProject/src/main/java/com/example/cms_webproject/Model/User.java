@@ -11,10 +11,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orders;
 
+    @Column(nullable = false, unique = true)
     private String id;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String email;
     //약관
     private boolean is14over;
