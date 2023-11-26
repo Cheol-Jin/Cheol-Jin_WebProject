@@ -11,13 +11,13 @@ import com.example.cms_webproject.Model.Comment;
 public class CommentDto {
     private int id;
     private String content;
-    private String writer;
+    private Long orders;
 
     public static CommentDto toDto(Comment comment) {
         return new CommentDto(
                 comment.getId(),
                 comment.getContent(),
-                comment.getUser().getId()
+                comment.getUser().getOrders()
         );
     }
 }

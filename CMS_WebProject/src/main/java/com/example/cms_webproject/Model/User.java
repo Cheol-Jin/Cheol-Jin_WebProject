@@ -2,9 +2,11 @@ package com.example.cms_webproject.Model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 
 @Entity
 @Data
+@Getter
 public class User {
 
     @Id
@@ -24,4 +26,10 @@ public class User {
     private boolean service;
     private boolean privacyinfo;
     private boolean marketing;
+    public User(Long orders){
+        this.orders = orders;
+    }
+
+    public User() {
+    }
 }

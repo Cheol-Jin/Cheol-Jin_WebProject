@@ -1,5 +1,6 @@
 package com.example.cms_webproject.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,15 +21,21 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
     // 댓글 작성하기
     @Transactional
-    public CommentDto writeComment(int boardId, CommentDto commentDto, User user) {
+    public CommentDto writeComment(int boardId, CommentDto commentDto) {
         Comment comment = new Comment();
         comment.setContent(commentDto.getContent());
 
+        // 입력으로 받은 user_id로 User 엔터티를 찾음
+        User user = userRepository.findByOrders(commentDto.getOrders())
+                .orElseThrow(() -> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다."));
+
+
         // 게시판 번호로 게시글 찾기
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> {
+        Board board = boardRepository.findById((long) boardId).orElseThrow(() -> {
             return new IllegalArgumentException("게시판을 찾을 수 없습니다.");
         });
 
@@ -44,7 +51,7 @@ public class CommentService {
     // 글에 해당하는 전체 댓글 불러오기
     @Transactional(readOnly = true)
     public List<CommentDto> getComments(int boardId) {
-        List<Comment> comments = commentRepository.findAllByBoardOrders(boardId);
+        List<Comment> comments = commentRepository.findAllByBoardOrdersBoard((long) boardId);
         List<CommentDto> commentDtos = new ArrayList<>();
 
         comments.forEach(s -> commentDtos.add(CommentDto.toDto(s)));

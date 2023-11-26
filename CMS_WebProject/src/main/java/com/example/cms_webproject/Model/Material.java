@@ -3,6 +3,8 @@ package com.example.cms_webproject.Model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 public class Material {
@@ -16,5 +18,8 @@ public class Material {
     private String matter;
     private Long price;
     private String image;
-
+    @OneToMany(mappedBy = "material")
+    private List<Basket> baskets;
 }
+
+

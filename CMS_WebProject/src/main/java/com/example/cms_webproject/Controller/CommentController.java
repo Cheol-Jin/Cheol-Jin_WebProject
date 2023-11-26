@@ -1,6 +1,7 @@
 package com.example.cms_webproject.Controller;
 
 /*import io.swagger.annotations.ApiOperation;*/
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +23,7 @@ public class CommentController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/comments/{boardId}")
     public Response writeComment(@PathVariable("boardId") Integer boardId, @RequestBody CommentDto commentDto) {
-        // 원래 로그인을 하면, User 정보는 세션을 통해서 구하고 주면 되지만,
-        // 지금은 핵심 개념을 알기 위해서, JWT 로그인은 생략하고, 임의로 findById 로 유저 정보를 넣어줬습니다.
-        // 추후에 로그인 기능을 도입하고 유저 정보는 세션을 통해서 넣어주면 됩니다.
-        User user = userRepository.findById(1L).get();
-        return new Response("성공", "댓글 작성을 완료했습니다.", commentService.writeComment(boardId, commentDto, user));
+        return new Response("성공", "댓글 작성을 완료했습니다.", commentService.writeComment(boardId, commentDto));
     }
 
 
