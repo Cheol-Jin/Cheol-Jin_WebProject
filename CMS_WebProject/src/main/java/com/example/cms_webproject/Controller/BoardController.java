@@ -10,6 +10,8 @@ import com.example.cms_webproject.Repository.UserRepository;
 import com.example.cms_webproject.Response;
 import com.example.cms_webproject.Service.BoardService;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 public class BoardController {
@@ -33,7 +35,8 @@ public class BoardController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/boards/{orders}")
     public Response getBoard(@PathVariable("orders") Long id) {
-        return new Response("성공", "개별 게시물 리턴", boardService.getBoard(id));
+        List<BoardDto> boardDtoList = boardService.getBoard(id);
+        return new Response("성공", "개별 게시물 리턴", boardDtoList);
     }
 
 

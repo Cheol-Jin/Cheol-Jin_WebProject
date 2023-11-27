@@ -1,7 +1,10 @@
 package com.example.cms_webproject.Model;
 
+import com.example.cms_webproject.Service.BoardService;
 import jakarta.persistence.*;
 import lombok.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +27,14 @@ public class Board {
     @Column(nullable = false)
     private String contents;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_order")
     private User user;
 
     @Column(nullable = false)
     private String subject;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "basket_order")
     private Basket basket;
 

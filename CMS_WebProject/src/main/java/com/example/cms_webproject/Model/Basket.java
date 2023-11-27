@@ -2,21 +2,32 @@ package com.example.cms_webproject.Model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class Basket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orders;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_order")
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_order", nullable = true)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //Basket에 user를 설정하는 메서드
+    public void setUser(User user) {
+        this.user = user;
+        if (!user.getBaskets().contains(this)) {
+            user.getBaskets().add(this);
+        }
+    }
+
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinColumn(name = "material_order")
     private Material material;
     private int number;

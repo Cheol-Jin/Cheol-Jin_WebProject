@@ -17,10 +17,12 @@ import com.example.cms_webproject.Model.Material;
 import com.example.cms_webproject.Repository.BoardRepository;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 
 @RequiredArgsConstructor
@@ -44,55 +46,100 @@ public class BoardService {
 
     // 개별 게시물 조회
     @Transactional(readOnly = true)
-    public BoardDto getBoard(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> {
-            return new IllegalArgumentException("Board Id를 찾을 수 없습니다.");
-        });
-        BoardDto boardDto = BoardDto.toDto(board);
-        return boardDto;
+    public List<BoardDto> getBoard(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Board Id를 찾을 수 없습니다."));
+
+        List<BoardDto> boardDtoList = new ArrayList<>();
+
+        // 중복 체크용 Set
+        Set<Long> uniqueMaterialOrders = new HashSet<>();
+
+        // 각 Material 정보에 대한 BoardDto 생성
+        for (Board currentBoard : board.getBasket().getBoards()) {
+            Material material = currentBoard.getBasket().getMaterial();
+            Long materialOrders = material.getOrders();
+
+            // 중복된 materialOrders가 없다면 BoardDto 추가
+            if (uniqueMaterialOrders.add(materialOrders)) {
+                BoardDto boardDto = new BoardDto(
+                        currentBoard.getOrdersBoard(),
+                        currentBoard.getTitle(),
+                        currentBoard.getContents(),
+                        currentBoard.getSubject(),
+                        currentBoard.getUser().getOrders(),
+                        material.getOrders(),
+                        material.getName(),
+                        material.getBrand(),
+                        material.getUses(),
+                        material.getMatter(),
+                        material.getPrice(),
+                        material.getImage(),
+                        currentBoard.getBasket().getNumber()
+                );
+
+                boardDtoList.add(boardDto);
+            }
+        }
+
+        // 중복 체크용 Set 초기화
+        uniqueMaterialOrders.clear();
+
+        return boardDtoList;
     }
 
     // 게시물 작성
     @Transactional(propagation = Propagation.REQUIRED)
-    public BoardDto write(BoardDto boardDto) {
+    public List<BoardDto> write(BoardDto boardDto) {
+        User user = userRepository.findByOrders(boardDto.getOrders())
+                .orElseThrow(() -> new RuntimeException("해당 사용자를 찾을 수 없습니다."));
+
         // 게시글 생성
         Board board = new Board();
         board.setTitle(boardDto.getTitle());
         board.setContents(boardDto.getContents());
         board.setSubject(boardDto.getSubject());
 
-        // 사용자 정보 설정
-        User user = userRepository.findByOrders(boardDto.getOrders())
-                .orElseThrow(() -> new RuntimeException("해당 사용자를 찾을 수 없습니다."));
-        board.setUser(user);
+        // 중복 체크용 Set
+        Set<Long> uniqueMaterialOrders = new HashSet<>();
 
-        // 게시글과 관련된 장바구니 정보 가져오기
-        List<Object[]> basketInfoList = basketRepository.getBasketInfoByUserOrder(boardDto.getOrders());
-
-        // 각 장바구니 정보에 대해 Board와 Basket 생성 및 저장
-        for (Object[] basketInfo : basketInfoList) {
-            // Basket 생성 및 설정
-            Basket basket = new Basket();
-
+        // 각 Material 정보에 대해 Basket 생성 및 저장
+        List<BoardDto> result = new ArrayList<>();
+        for (Object[] basketInfo : basketRepository.getBasketInfoByUserOrder(boardDto.getOrders())) {
             Long materialOrders = (Long) basketInfo[0];
-            int number = (int) basketInfo[1];
 
-            Material material = materialRepository.findByOrders(materialOrders);
-            basket.setMaterial(material);
-            basket.setOrders(materialOrders);
-            basket.setNumber(number);
+            // 중복된 materialOrders가 없다면 데이터 추가
+            if (uniqueMaterialOrders.add(materialOrders)) {
+                Basket basket = new Basket();
+                basket.setUser(user);
 
-            // Board와 Basket 연결
-            board.setBasket(basket);
+                // Material 정보 설정
+                Material material = materialRepository.findByOrders(materialOrders);
+                basket.setMaterial(material);
+                basket.setOrders(materialOrders);
+                basket.setNumber((int) basketInfo[1]);
 
-            // User, Material, Basket, Board 저장
-            userRepository.save(user);
-            materialRepository.save(material);
-            basketRepository.save(basket);
-            boardRepository.save(board);
+                // Board와 Basket 연결
+                board.setBasket(basket);
+                board.setUser(user);
+
+                // User와 Material을 먼저 저장
+                userRepository.save(user);
+                materialRepository.save(material);
+
+                // Basket, Board 저장
+                basketRepository.save(basket);
+                boardRepository.save(board);
+
+                // 결과 리스트에 BoardDto 추가
+                result.add(BoardDto.toDto(board));
+            }
         }
 
-        return BoardDto.toDto(board);
+        // 중복 체크용 Set 초기화
+        uniqueMaterialOrders.clear();
+
+        return result;
     }
 
 
@@ -105,6 +152,7 @@ public class BoardService {
 
         board.setTitle(boardDto.getTitle());
         board.setContents(boardDto.getContents());
+        board.setSubject(boardDto.getSubject());
 
         return BoardDto.toDto(board);
     }
