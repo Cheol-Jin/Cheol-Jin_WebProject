@@ -8,15 +8,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.example.cms_webproject.Model.Board;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Data
 public class BoardDto {
     private Long ordersBoard;
     private String title;
+    private String userId;
     private String contents;
     private String subject;
+    private int count;
     private Long orders;
+    private LocalDate createdAt;
 
     private Long materialOrders;
     private String materialName;
@@ -31,6 +35,8 @@ public class BoardDto {
     // 중복된 Material 정보 체크용 Set
     private static Set<Long> uniqueMaterialOrders = new HashSet<>();
 
+
+
     // 중복된 Material 정보를 체크하고 추가하는 메서드
     public boolean addMaterialOrder(Long materialOrders) {
         return uniqueMaterialOrders.add(materialOrders);
@@ -44,8 +50,11 @@ public class BoardDto {
     public BoardDto(
             Long ordersBoard,
             String title,
+            String userId,
             String contents,
             String subject,
+            int count,
+            LocalDate createdAt,
             Long orders,
             Long materialOrders,
             String materialName,
@@ -58,8 +67,11 @@ public class BoardDto {
     ) {
         this.ordersBoard = ordersBoard;
         this.title = title;
+        this.userId = userId;
         this.contents = contents;
         this.subject = subject;
+        this.count = count;
+        this.createdAt = createdAt;
         this.orders = orders;
         this.materialOrders = materialOrders;
         this.materialName = materialName;
@@ -83,8 +95,11 @@ public class BoardDto {
             boardDto = new BoardDto(
                     board.getOrdersBoard(),
                     board.getTitle(),
+                    board.getUser().getId(),
                     board.getContents(),
                     board.getSubject(),
+                    board.getCount(),
+                    board.getCreatedAt(),
                     board.getUser().getOrders(),
                     material.getOrders(),
                     material.getName(),

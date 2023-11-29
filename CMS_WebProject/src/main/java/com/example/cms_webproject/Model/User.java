@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.List;
+
 @Entity
-@Data
 @Getter
+@Data
 public class User {
 
     @Id
@@ -32,4 +34,6 @@ public class User {
 
     public User() {
     }
+    @OneToMany(mappedBy = "user")
+    private List<Basket> baskets;
 }

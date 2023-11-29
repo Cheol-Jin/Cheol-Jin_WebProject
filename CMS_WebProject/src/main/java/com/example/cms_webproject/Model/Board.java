@@ -3,9 +3,11 @@ package com.example.cms_webproject.Model;
 import com.example.cms_webproject.Service.BoardService;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,13 @@ public class Board {
 
     @Column(nullable = false)
     private String contents;
+
+    @CreationTimestamp
+    @Column(nullable = false, name = "date")
+    private LocalDate createdAt;
+
+    @Column(nullable = false)
+    private int count;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_order")

@@ -7,6 +7,7 @@ import com.example.cms_webproject.Repository.MaterialRepository;
 import com.example.cms_webproject.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,11 @@ public class BoardService {
     private final MaterialRepository materialRepository;
     private final UserRepository userRepository;
 
+    public void increaseBoardCount(Board board) {
+        board.setCount(board.getCount() + 1);
+        this.boardRepository.save(board);
+    }
+
     // 전체 게시물 조회
     @Transactional(readOnly = true)
     public List<BoardDto> getBoards() {
@@ -45,10 +51,12 @@ public class BoardService {
     }
 
     // 개별 게시물 조회
-    @Transactional(readOnly = true)
+    @Transactional
     public List<BoardDto> getBoard(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Board Id를 찾을 수 없습니다."));
+
+        increaseBoardCount(board);
 
         List<BoardDto> boardDtoList = new ArrayList<>();
 
@@ -65,8 +73,11 @@ public class BoardService {
                 BoardDto boardDto = new BoardDto(
                         currentBoard.getOrdersBoard(),
                         currentBoard.getTitle(),
+                        currentBoard.getUser().getId(),
                         currentBoard.getContents(),
                         currentBoard.getSubject(),
+                        currentBoard.getCount(),
+                        currentBoard.getCreatedAt(),
                         currentBoard.getUser().getOrders(),
                         material.getOrders(),
                         material.getName(),
