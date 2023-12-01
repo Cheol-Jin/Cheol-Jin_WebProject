@@ -33,7 +33,7 @@ public class Board {
     @Column(nullable = false, name = "date")
     private LocalDate createdAt;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "count")
     private int count;
 
     @ManyToOne(fetch = FetchType.EAGER)

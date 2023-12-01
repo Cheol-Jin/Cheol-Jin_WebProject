@@ -34,9 +34,8 @@ public class BoardController {
    /* @ApiOperation(value = "개별 게시글 보기", notes = "개별 게시글 조회한다.")*/
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/boards/{orders}")
-    public Response getBoard(@PathVariable("orders") Long id) {
-        List<BoardDto> boardDtoList = boardService.getBoard(id);
-        return new Response("성공", "개별 게시물 리턴", boardDtoList);
+    public Response getBoard(@PathVariable("orders") Long orders) {
+        return new Response("성공", "개별 게시물 리턴", boardService.getBoard(orders));
     }
 
 

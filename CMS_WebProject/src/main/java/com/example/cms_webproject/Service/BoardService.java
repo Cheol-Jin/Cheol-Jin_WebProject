@@ -5,7 +5,10 @@ import com.example.cms_webproject.Model.Basket;
 import com.example.cms_webproject.Repository.BasketRepository;
 import com.example.cms_webproject.Repository.MaterialRepository;
 import com.example.cms_webproject.Repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.stereotype.Service;
@@ -36,10 +39,17 @@ public class BoardService {
     private final MaterialRepository materialRepository;
     private final UserRepository userRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+
+
+    @Transactional
     public void increaseBoardCount(Board board) {
         board.setCount(board.getCount() + 1);
         this.boardRepository.save(board);
     }
+
 
     // 전체 게시물 조회
     @Transactional(readOnly = true)
@@ -52,52 +62,16 @@ public class BoardService {
 
     // 개별 게시물 조회
     @Transactional
-    public List<BoardDto> getBoard(Long id) {
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Board Id를 찾을 수 없습니다."));
+    public BoardDto getBoard(Long orders) {
+        Board board = boardRepository.findById(orders).orElseThrow(() -> {
+            return new IllegalArgumentException("Board Id를 찾을 수 없습니다.");
+        });
 
         increaseBoardCount(board);
-
-        List<BoardDto> boardDtoList = new ArrayList<>();
-
-        // 중복 체크용 Set
-        Set<Long> uniqueMaterialOrders = new HashSet<>();
-
-        // 각 Material 정보에 대한 BoardDto 생성
-        for (Board currentBoard : board.getBasket().getBoards()) {
-            Material material = currentBoard.getBasket().getMaterial();
-            Long materialOrders = material.getOrders();
-
-            // 중복된 materialOrders가 없다면 BoardDto 추가
-            if (uniqueMaterialOrders.add(materialOrders)) {
-                BoardDto boardDto = new BoardDto(
-                        currentBoard.getOrdersBoard(),
-                        currentBoard.getTitle(),
-                        currentBoard.getUser().getId(),
-                        currentBoard.getContents(),
-                        currentBoard.getSubject(),
-                        currentBoard.getCount(),
-                        currentBoard.getCreatedAt(),
-                        currentBoard.getUser().getOrders(),
-                        material.getOrders(),
-                        material.getName(),
-                        material.getBrand(),
-                        material.getUses(),
-                        material.getMatter(),
-                        material.getPrice(),
-                        material.getImage(),
-                        currentBoard.getBasket().getNumber()
-                );
-
-                boardDtoList.add(boardDto);
-            }
-        }
-
-        // 중복 체크용 Set 초기화
-        uniqueMaterialOrders.clear();
-
-        return boardDtoList;
+        BoardDto boardDto = BoardDto.toDto(board);
+        return boardDto;
     }
+
 
     // 게시물 작성
     @Transactional(propagation = Propagation.REQUIRED)
@@ -182,4 +156,5 @@ public class BoardService {
         boardRepository.deleteById(id);
 
     }
+
 }
