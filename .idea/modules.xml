@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Builder_WebProject.iml" filepath="$PROJECT_DIR$/.idea/Builder_WebProject.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CMS_WebProject.iml" filepath="$PROJECT_DIR$/.idea/modules/CMS_WebProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CMS_WebProject.main.iml" filepath="$PROJECT_DIR$/.idea/modules/CMS_WebProject.main.iml" />
     </modules>
   </component>
 </project>

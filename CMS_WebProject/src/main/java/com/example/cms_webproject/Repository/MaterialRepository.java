@@ -1,6 +1,8 @@
 package com.example.cms_webproject.Repository;
 
+import com.example.cms_webproject.Model.Basket;
 import com.example.cms_webproject.Model.Material;
+import com.example.cms_webproject.Model.User;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,6 +26,7 @@ public interface MaterialRepository extends JpaRepository<Material,Long> {
     Material findByName(String name);
     List<Material> findByNameContaining(String name);
     Material findByOrders(Long orders);
+
     @Transactional
     void deleteByOrders(Long orders);
 }

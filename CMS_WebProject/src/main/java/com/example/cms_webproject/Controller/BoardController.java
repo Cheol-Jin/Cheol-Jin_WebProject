@@ -35,7 +35,7 @@ public class BoardController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/boards/{orders}")
     public Response getBoard(@PathVariable("orders") Long orders) {
-        return new Response("성공", "개별 게시물 리턴", boardService.getBoard(orders));
+        return new Response("성공", "개별 게시물 리턴", boardService.getBoardWithComments(orders));
     }
 
 

@@ -1,7 +1,8 @@
 package com.example.cms_webproject.Service;
 
 import com.example.cms_webproject.Dto.BasketInfoDto;
-import com.example.cms_webproject.Model.Basket;
+import com.example.cms_webproject.Dto.CommentDto;
+import com.example.cms_webproject.Model.*;
 import com.example.cms_webproject.Repository.BasketRepository;
 import com.example.cms_webproject.Repository.MaterialRepository;
 import com.example.cms_webproject.Repository.UserRepository;
@@ -15,13 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.cms_webproject.Dto.BoardDto;
-import com.example.cms_webproject.Model.Board;
-import com.example.cms_webproject.Model.User;
-import com.example.cms_webproject.Model.Material;
 import com.example.cms_webproject.Repository.BoardRepository;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,14 +61,17 @@ public class BoardService {
 
     // 개별 게시물 조회
     @Transactional
-    public BoardDto getBoard(Long orders) {
-        Board board = boardRepository.findById(orders).orElseThrow(() -> {
-            return new IllegalArgumentException("Board Id를 찾을 수 없습니다.");
-        });
+    public BoardDto getBoardWithComments(Long orders) {
+        Board board = boardRepository.findById(orders)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 
-        increaseBoardCount(board);
-        BoardDto boardDto = BoardDto.toDto(board);
-        return boardDto;
+        List<CommentDto> commentDtos = new ArrayList<>();
+
+        for (Comment comment : board.getComments()) {
+            commentDtos.add(CommentDto.toDto(comment));
+        }
+
+        return BoardDto.toDtoWithComments(board, commentDtos);
     }
 
 
@@ -84,6 +86,7 @@ public class BoardService {
         board.setTitle(boardDto.getTitle());
         board.setContents(boardDto.getContents());
         board.setSubject(boardDto.getSubject());
+        board.setStatus(board.getStatus());
 
         // 중복 체크용 Set
         Set<Long> uniqueMaterialOrders = new HashSet<>();
@@ -138,6 +141,7 @@ public class BoardService {
         board.setTitle(boardDto.getTitle());
         board.setContents(boardDto.getContents());
         board.setSubject(boardDto.getSubject());
+        board.setStatus(boardDto.getStatus());
 
         return BoardDto.toDto(board);
     }

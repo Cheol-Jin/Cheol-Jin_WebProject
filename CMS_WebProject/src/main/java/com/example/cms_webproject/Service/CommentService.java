@@ -30,7 +30,7 @@ public class CommentService {
         comment.setContent(commentDto.getContent());
 
         // 입력으로 받은 user_id로 User 엔터티를 찾음
-        User user = userRepository.findByOrders(commentDto.getOrders())
+        User user = userRepository.findByOrders(commentDto.getUserOrders())
                 .orElseThrow(() -> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다."));
 
 

@@ -1,6 +1,9 @@
 package com.example.cms_webproject.Model;
 
 import com.example.cms_webproject.Service.BoardService;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,6 +20,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +32,9 @@ public class Board {
 
     @Column(nullable = false)
     private String contents;
+
+    @Column(nullable = false)
+    private String status; //역경매 진행 현황
 
     @CreationTimestamp
     @Column(nullable = false, name = "date")
@@ -46,5 +53,14 @@ public class Board {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "basket_order")
     private Basket basket;
+
+    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Board{ordersBoard=" + ordersBoard + "}";
+    }
+
 
 }

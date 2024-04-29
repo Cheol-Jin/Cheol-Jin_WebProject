@@ -9,15 +9,17 @@ import com.example.cms_webproject.Model.Comment;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentDto {
-    private int id;
+    private int comment_id;
     private String content;
-    private Long orders;
+    private Long UserOrders;
+    private Long boardOrders;
 
     public static CommentDto toDto(Comment comment) {
         return new CommentDto(
-                comment.getId(),
+                comment.getComment_id(),
                 comment.getContent(),
-                comment.getUser().getOrders()
+                comment.getUser().getOrders(),
+                comment.getBoard().getOrdersBoard()
         );
     }
 }
