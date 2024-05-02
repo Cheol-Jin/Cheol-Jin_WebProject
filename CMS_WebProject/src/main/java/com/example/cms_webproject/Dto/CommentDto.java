@@ -6,20 +6,19 @@ import lombok.NoArgsConstructor;
 import com.example.cms_webproject.Model.Comment;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CommentDto {
-    private int comment_id;
     private String content;
     private Long UserOrders;
-    private Long boardOrders;
+
+    public CommentDto(String content, Long UserOrders) {
+        this.content = content;
+        this.UserOrders = UserOrders;
+    }
 
     public static CommentDto toDto(Comment comment) {
         return new CommentDto(
-                comment.getComment_id(),
                 comment.getContent(),
-                comment.getUser().getOrders(),
-                comment.getBoard().getOrdersBoard()
+                comment.getUser().getOrders()
         );
     }
 }
